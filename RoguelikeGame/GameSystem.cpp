@@ -5,7 +5,7 @@ GameSystem::GameSystem(string levelFile)
 {
 	_player.Init(1, 100, 10, 1, 0);
 	
-	_level.LoadLevel(levelFile, _player, _enemies);
+	_level.LoadLevel(levelFile, _player);
 	_level.PrintLevel();
 	
 

@@ -4,7 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <cstdio>
-
+#include <algorithm>
 #include "Player.h"
 #include "Enemy.h"
 
@@ -14,7 +14,7 @@ class Level
 {
 public:
 	Level();
-	void LoadLevel(string fireName, Player &player, vector<Enemy> &enemies);
+	void LoadLevel(string fireName, Player &player);
 	void PrintLevel();
 	void MovePlayer(char input, Player &player);
 	char GetTile(int x, int y);
@@ -22,8 +22,9 @@ public:
 private:
 	void ProcessPlayerMove(Player &player, int targetX, int targetY);
 	void BattleMonster(Player &player, int targetX, int targetY);
-private:
+
 	vector<string> _levelData;
+	vector<Enemy> _enemies;
 	string _clearString;
 };
 

@@ -3,7 +3,6 @@
 #include <conio.h>
 #include "Player.h"
 #include "Level.h"
-#include "Enemy.h"
 
 using namespace std;
 
@@ -17,5 +16,4 @@ public:
 private:
 	Level _level;
 	Player _player;
-	vector<Enemy> _enemies;
 };

@@ -5,7 +5,7 @@ Level::Level()
 	_clearString = (1000, '\n');
 }
 //Load file
-void Level::LoadLevel(string fileName, Player &player, vector<Enemy> &enemies)
+void Level::LoadLevel(string fileName, Player &player)
 {
 	//Load level
 	ifstream file;
@@ -37,16 +37,16 @@ void Level::LoadLevel(string fileName, Player &player, vector<Enemy> &enemies)
 				cout << j << " : " << i;
 				break;
 			case 'S': //Snake
-				enemies.push_back(Enemy("Snake", tile, 1, 3, 1, 10, 10));
+				_enemies.push_back(Enemy("Snake", tile, 1, 3, 1, 10, 10, j, i));
 				break;
 			case 'g':
-				enemies.push_back(Enemy("Goblin", tile, 1, 6, 2, 30, 10));
+				_enemies.push_back(Enemy("Goblin", tile, 1, 6, 2, 30, 10, j, i));
 				break;
 			case 'O':
-				enemies.push_back(Enemy("Ogre", tile, 4, 20, 4, 200, 500));
+				_enemies.push_back(Enemy("Ogre", tile, 4, 20, 4, 200, 500, j, i));
 				break;
 			case 'D':
-				enemies.push_back(Enemy("Dragon", tile, 10, 2000, 10, 2000, 50000000));
+				_enemies.push_back(Enemy("Dragon", tile, 10, 2000, 10, 2000, 50000000, j, i));
 				break;
 			default:
 				break;
@@ -108,7 +108,45 @@ void Level::MovePlayer(char input, Player &player)
 
 void Level::BattleMonster(Player &player, int targetX, int targetY)
 {
-
+	int enemyX, enemyY, attackRoll, attackResult, playerX, playerY;
+	string name;
+	player.GetPosition(playerX, playerY);
+	for (int i = 0; i < _enemies.size(); i++)
+	{
+		_enemies[i].GetPosition(enemyX, enemyY);
+		if (targetX == enemyX && targetY == enemyY)
+		{
+			//Battle
+			attackRoll = player.Attack();
+			name = _enemies[i].GetName();
+			printf("\nPlayer attacked %s with a roll of %d", name.c_str(), attackRoll);
+			attackResult = _enemies[i].TakeDamage(attackRoll);
+			if (attackResult != 0)
+			{
+				printf("\n%s die!", name.c_str());
+				player.AddExperience(attackResult);
+				//delete
+				SetTile(targetX, targetY, '.');
+				if ((i - 1) != _enemies.size())
+				{
+					std::iter_swap(_enemies.begin() + i, _enemies.end()-1);
+				}
+				_enemies.pop_back();
+			}
+			//Monster fight
+			attackRoll = _enemies[i].Attack();
+			attackResult = _enemies[i].TakeDamage(attackRoll);
+			if (attackResult != 0)
+			{
+				printf("\nYou die!");
+				SetTile(playerX, playerY, 'x');
+				system("pause");
+				exit(0);
+			}
+			system("pause");
+			return;
+		}
+	}
 }
 
 void Level::ProcessPlayerMove(Player &player, int targetX, int targetY)
@@ -126,8 +164,8 @@ void Level::ProcessPlayerMove(Player &player, int targetX, int targetY)
 		SetTile(targetX, targetY, '@');
 		SetTile(playerX, playerY, '.');
 		break;
-	default:
-
+	default: //hit monster
+		BattleMonster(player, targetX, targetY);
 		break;
 	}
 }

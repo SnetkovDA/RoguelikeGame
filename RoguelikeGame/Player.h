@@ -1,4 +1,7 @@
 #pragma once
+#include <random>
+#include <ctime>
+using namespace std;
 
 class Player
 {
@@ -11,6 +14,12 @@ public:
 
 	//Getters
 	void GetPosition(int &x, int &y);
+
+	int Attack();
+
+	void AddExperience(int experience);
+
+	int TakeDamage(int damage);
 
 private:
 	//Properties
