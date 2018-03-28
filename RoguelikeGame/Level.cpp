@@ -37,13 +37,13 @@ void Level::LoadLevel(string fileName, Player &player)
 				cout << j << " : " << i;
 				break;
 			case 'S': //Snake
-				_enemies.push_back(Enemy("Snake", tile, 1, 3, 1, 10, 10, j, i));
+				_enemies.push_back(Enemy("Snake", tile, 1, 3, 1, 10, 50, j, i));
 				break;
 			case 'g':
-				_enemies.push_back(Enemy("Goblin", tile, 1, 6, 2, 30, 10, j, i));
+				_enemies.push_back(Enemy("Goblin", tile, 1, 6, 2, 30, 400, j, i));
 				break;
 			case 'O':
-				_enemies.push_back(Enemy("Ogre", tile, 4, 20, 4, 200, 500, j, i));
+				_enemies.push_back(Enemy("Ogre", tile, 4, 20, 4, 200, 1500, j, i));
 				break;
 			case 'D':
 				_enemies.push_back(Enemy("Dragon", tile, 10, 2000, 10, 2000, 50000000, j, i));
