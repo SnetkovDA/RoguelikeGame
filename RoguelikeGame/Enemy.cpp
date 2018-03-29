@@ -1,7 +1,7 @@
 #include "Enemy.h"
 
 
-Enemy::Enemy(string name, char tile, int level, int attack, int defence, int health, int experience, int x , int y)
+Enemy::Enemy(string name, char tile, int level, int attack, int defence, int health, int experience, int attackRange)
 {
 	_name = name;
 	_tile = tile;
@@ -10,8 +10,7 @@ Enemy::Enemy(string name, char tile, int level, int attack, int defence, int hea
 	_defence = defence;
 	_health = health;
 	_experience = experience;
-	_x = x;
-	_y = y;
+	_attackDist = attackRange;
 }
 
 void Enemy::SetPosition(int x, int y)
@@ -22,6 +21,11 @@ void Enemy::SetPosition(int x, int y)
 void Enemy::GetPosition(int &x, int &y)
 {
 	x = _x; y = _y;
+}
+
+char Enemy::GetTile()
+{
+	return _tile;
 }
 
 string Enemy::GetName()
@@ -46,4 +50,40 @@ int Enemy::TakeDamage(int damage)
 			return _experience;
 	}
 	return 0;
+}
+
+char Enemy::GetMove(int playerX, int playerY)
+{
+	static default_random_engine randEngine(time(NULL));
+	uniform_int_distribution<int> moveRoll(0, 6);
+	int distance;
+	int dx = _x - playerX, dy = _y - playerY;
+	int adx(abs(dx)), ady(abs(dy));
+	distance = adx + ady;
+	if (distance <= _attackDist)
+	{
+		if (adx > ady)
+		{
+			if (dx > 0)
+				return 'a';
+			else
+				return 'd';
+		}
+		else
+		{
+			if (dy > 0)
+				return 'w';
+			else
+				return 's';
+		}
+	}
+	int randomMove = moveRoll(randEngine);
+	switch (randomMove)
+	{
+	case 0: return 'w';
+	case 1: return 'a';
+	case 2: return 's';
+	case 3: return 'd';
+	default: return '.';
+	}
 }

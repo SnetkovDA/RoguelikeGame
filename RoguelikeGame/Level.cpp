@@ -2,7 +2,6 @@
 
 Level::Level()
 {
-	_clearString = (1000, '\n');
 }
 //Load file
 void Level::LoadLevel(string fileName, Player &player)
@@ -37,16 +36,20 @@ void Level::LoadLevel(string fileName, Player &player)
 				cout << j << " : " << i;
 				break;
 			case 'S': //Snake
-				_enemies.push_back(Enemy("Snake", tile, 1, 3, 1, 10, 50, j, i));
+				_enemies.push_back(Enemy("Snake", tile, 1, 3, 1, 10, 50, 3));
+				_enemies.back().SetPosition(j, i);
 				break;
 			case 'g':
-				_enemies.push_back(Enemy("Goblin", tile, 1, 6, 2, 30, 400, j, i));
+				_enemies.push_back(Enemy("Goblin", tile, 1, 6, 2, 30, 150, 5));
+				_enemies.back().SetPosition(j, i);
 				break;
 			case 'O':
-				_enemies.push_back(Enemy("Ogre", tile, 4, 20, 4, 200, 1500, j, i));
+				_enemies.push_back(Enemy("Ogre", tile, 4, 20, 4, 200, 500, 6));
+				_enemies.back().SetPosition(j, i);
 				break;
 			case 'D':
-				_enemies.push_back(Enemy("Dragon", tile, 10, 2000, 10, 2000, 50000000, j, i));
+				_enemies.push_back(Enemy("Dragon", tile, 10, 2000, 10, 2000, 50000000, 6));
+				_enemies.back().SetPosition(j, i);
 				break;
 			default:
 				break;
@@ -106,7 +109,35 @@ void Level::MovePlayer(char input, Player &player)
 	
 }
 
-void Level::BattleMonster(Player &player, int targetX, int targetY)
+void Level::UpdateEnemies(Player & player)
+{
+	int playerX, playerY;
+	player.GetPosition(playerX, playerY);
+	int enemyX, enemyY;
+	char aiMove;
+	for (int i = 0; i < _enemies.size(); i++)
+	{
+		aiMove = _enemies[i].GetMove(playerX, playerY);
+		_enemies[i].GetPosition(enemyX, enemyY);
+		switch (aiMove)
+		{
+		case 'w': //up
+			ProcessEnemyMove(player, i, enemyX, enemyY - 1);
+			break;
+		case 's': //down
+			ProcessEnemyMove(player, i, enemyX, enemyY + 1);
+			break;
+		case 'a': //left
+			ProcessEnemyMove(player, i, enemyX - 1, enemyY);
+			break;
+		case 'd': // Right
+			ProcessEnemyMove(player, i, enemyX + 1, enemyY);
+			break;
+		}
+	}
+}
+
+void Level::BattleEnemy(Player &player, int targetX, int targetY)
 {
 	int enemyX, enemyY, attackRoll, attackResult, playerX, playerY;
 	string name;
@@ -127,11 +158,9 @@ void Level::BattleMonster(Player &player, int targetX, int targetY)
 				player.AddExperience(attackResult);
 				//delete
 				SetTile(targetX, targetY, '.');
-				if ((i - 1) != _enemies.size())
-				{
-					std::iter_swap(_enemies.begin() + i, _enemies.end()-1);
-				}
+				_enemies[i] = _enemies.back();
 				_enemies.pop_back();
+				i--;
 			}
 			//Monster fight
 			attackRoll = _enemies[i].Attack();
@@ -164,8 +193,31 @@ void Level::ProcessPlayerMove(Player &player, int targetX, int targetY)
 		SetTile(targetX, targetY, '@');
 		SetTile(playerX, playerY, '.');
 		break;
-	default: //hit monster
-		BattleMonster(player, targetX, targetY);
+	default: //hit enemy
+		BattleEnemy(player, targetX, targetY);
+		break;
+	}
+}
+
+void Level::ProcessEnemyMove(Player & player, int enemyIndex, int targetX, int targetY)
+{
+	char movingTile;
+	int enemyX, enemyY;
+	_enemies[enemyIndex].GetPosition(enemyX, enemyY);
+	movingTile = GetTile(targetX, targetY);
+	switch (movingTile)
+	{
+	case '#': //stop
+		break;
+	case '.': //move
+		_enemies[enemyIndex].SetPosition(targetX, targetY);
+		SetTile(targetX, targetY, _enemies[enemyIndex].GetTile());
+		SetTile(enemyX, enemyY, '.');
+		break;
+	case '@':
+		BattleEnemy(player, enemyX, enemyY);
+		break;
+	default: //hit enemy
 		break;
 	}
 }

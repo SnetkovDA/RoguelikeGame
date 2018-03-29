@@ -45,7 +45,6 @@ void Player::AddExperience(int experience)
 		_defence += 1;
 		_health += 10;
 		_level++;
-		system("pause");
 	}
 }
 

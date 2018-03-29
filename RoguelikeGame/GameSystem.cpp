@@ -4,12 +4,9 @@
 GameSystem::GameSystem(string levelFile)
 {
 	_player.Init(1, 100, 10, 1, 0);
-	
 	_level.LoadLevel(levelFile, _player);
 	_level.PrintLevel();
 	
-
-	system("pause");
 }
 
 void GameSystem::PlayGame()
@@ -19,6 +16,7 @@ void GameSystem::PlayGame()
 	{
 		_level.PrintLevel();
 		PlayerMove();
+		_level.UpdateEnemies(_player);
 	}
 }
 
