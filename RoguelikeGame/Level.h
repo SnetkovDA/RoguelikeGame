@@ -14,7 +14,7 @@ class Level
 public:
 	Level();
 	void LoadLevel(string fireName, Player &player);
-	void PrintLevel();
+	void PrintLevel(Player &player);
 	void MovePlayer(char input, Player &player);
 	void UpdateEnemies(Player &player);
 	char GetTile(int x, int y);

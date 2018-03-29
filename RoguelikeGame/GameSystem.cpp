@@ -3,9 +3,9 @@
 //Loading level
 GameSystem::GameSystem(string levelFile)
 {
-	_player.Init(1, 100, 10, 1, 0);
+	_player.StartupDialog();
 	_level.LoadLevel(levelFile, _player);
-	_level.PrintLevel();
+	_level.PrintLevel(_player);
 	
 }
 
@@ -14,7 +14,7 @@ void GameSystem::PlayGame()
 	bool isDone = false;
 	while (isDone != true)
 	{
-		_level.PrintLevel();
+		_level.PrintLevel(_player);
 		PlayerMove();
 		_level.UpdateEnemies(_player);
 	}
@@ -23,7 +23,7 @@ void GameSystem::PlayGame()
 void GameSystem::PlayerMove()
 {
 	char input;
-	printf("Enter a move command (w/a/s/d)");
+	printf("Enter a move command (w/a/s/d):\n");
 	input = _getch();
 	_level.MovePlayer(input, _player);
 }

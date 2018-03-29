@@ -36,11 +36,11 @@ void Level::LoadLevel(string fileName, Player &player)
 				cout << j << " : " << i;
 				break;
 			case 'S': //Snake
-				_enemies.push_back(Enemy("Snake", tile, 1, 3, 1, 10, 50, 3));
+				_enemies.push_back(Enemy("Snake", tile, 1, 3, 0, 10, 50, 3));
 				_enemies.back().SetPosition(j, i);
 				break;
 			case 'g':
-				_enemies.push_back(Enemy("Goblin", tile, 1, 6, 2, 30, 150, 5));
+				_enemies.push_back(Enemy("Goblin", tile, 1, 10, 2, 30, 150, 5));
 				_enemies.back().SetPosition(j, i);
 				break;
 			case 'O':
@@ -57,13 +57,34 @@ void Level::LoadLevel(string fileName, Player &player)
 		}
 	}
 }
-//Show level
-void Level::PrintLevel()
+//Draw every frame
+void Level::PrintLevel(Player &player)
 {
 	system("cls");
 	for (int i = 0; i < _levelData.size(); i++)
 	{
 		printf("%s",_levelData[i].c_str());
+		switch (i)
+		{
+		case 1:
+			printf("\tPlayer stats:");
+			break;
+		case 3:
+			printf("\tHealth: %d", player.GetHealth());
+			break;
+		case 5:
+			printf("\tMax attack: %d", player.GetAttack());
+			break;
+		case 7:
+			printf("\tDefence: %d", player.GetDefence());
+			break;
+		case 9:
+			printf("\tLevel: %d", player.GetLevel());
+			break;
+		case 10:
+			printf("\tExp: %d/50", player.GetExperience());
+			break;
+		}
 		printf("\n");
 	}
 	printf("\n");
@@ -139,10 +160,11 @@ void Level::UpdateEnemies(Player & player)
 
 void Level::BattleEnemy(Player &player, int targetX, int targetY)
 {
-	int enemyX, enemyY, attackRoll, attackResult, playerX, playerY;
+	int enemyX, enemyY, attackRoll, attackResult, playerX, playerY, len;
 	string name;
 	player.GetPosition(playerX, playerY);
-	for (int i = 0; i < _enemies.size(); i++)
+	len = _enemies.size();
+	for (int i = 0; i < len; i++)
 	{
 		_enemies[i].GetPosition(enemyX, enemyY);
 		if (targetX == enemyX && targetY == enemyY)
@@ -150,24 +172,26 @@ void Level::BattleEnemy(Player &player, int targetX, int targetY)
 			//Battle
 			attackRoll = player.Attack();
 			name = _enemies[i].GetName();
-			printf("\nPlayer attacked %s with a roll of %d", name.c_str(), attackRoll);
+			printf("Player attacked %s with a roll of %d\n", name.c_str(), attackRoll);
 			attackResult = _enemies[i].TakeDamage(attackRoll);
 			if (attackResult != 0)
 			{
-				printf("\n%s die!", name.c_str());
+				printf("%s die!\n", name.c_str());
 				player.AddExperience(attackResult);
 				//delete
 				SetTile(targetX, targetY, '.');
 				_enemies[i] = _enemies.back();
 				_enemies.pop_back();
 				i--;
+				system("pause");
+				return;
 			}
 			//Monster fight
 			attackRoll = _enemies[i].Attack();
-			attackResult = _enemies[i].TakeDamage(attackRoll);
+			attackResult = player.TakeDamage(attackRoll);
 			if (attackResult != 0)
 			{
-				printf("\nYou die!");
+				printf("You die!\n");
 				SetTile(playerX, playerY, 'x');
 				system("pause");
 				exit(0);

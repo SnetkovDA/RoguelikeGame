@@ -1,5 +1,5 @@
 1. Create dialog with player to init player parametres
-2. Display current health and level of player
+2. Display current health and level of player (done)
 3. Add simple invertory system
 4. Rewrite enemies code to move automatically
 5. Rewrite render engine into Direct2D or OpenGL
